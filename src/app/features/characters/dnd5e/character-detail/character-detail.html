@@ -1,0 +1,26 @@
+@if (errorMessage()) {
+  <p style="color: red;">{{ errorMessage() }}</p>
+}
+
+@if (character(); as char) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ char.name }}</mat-card-title>
+      <mat-card-subtitle>{{ char.race }} {{ char.characterClass }}, Level {{ char.level }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h3>Attribute</h3>
+      <ul>
+        <li>Stärke: {{ char.stats.strength }} ({{ char.stats.strengthModifier >= 0 ? '+' : '' }}{{ char.stats.strengthModifier }})</li>
+        <li>Geschicklichkeit: {{ char.stats.dexterity }} ({{ char.stats.dexterityModifier >= 0 ? '+' : '' }}{{ char.stats.dexterityModifier }})</li>
+        <li>Konstitution: {{ char.stats.constitution }} ({{ char.stats.constitutionModifier >= 0 ? '+' : '' }}{{ char.stats.constitutionModifier }})</li>
+        <li>Intelligenz: {{ char.stats.intelligence }} ({{ char.stats.intelligenceModifier >= 0 ? '+' : '' }}{{ char.stats.intelligenceModifier }})</li>
+        <li>Weisheit: {{ char.stats.wisdom }} ({{ char.stats.wisdomModifier >= 0 ? '+' : '' }}{{ char.stats.wisdomModifier }})</li>
+        <li>Charisma: {{ char.stats.charisma }} ({{ char.stats.charismaModifier >= 0 ? '+' : '' }}{{ char.stats.charismaModifier }})</li>
+      </ul>
+      <p><b>Proficiency Bonus:</b> +{{ char.proficiencyBonus }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <a routerLink="/characters">← Zurück zur Liste</a>
+}

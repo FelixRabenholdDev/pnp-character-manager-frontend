@@ -1,12 +1,15 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 import { CharacterService } from '../../../../core/services/character.service';
 import { PlayerCharacter } from '../../../../core/models/player-character.model';
 
 @Component({
   selector: 'app-character-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule, MatCardModule, MatButtonModule],
   templateUrl: './character-list.html',
   styleUrl: './character-list.scss'
 })

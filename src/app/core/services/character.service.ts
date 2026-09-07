@@ -15,4 +15,8 @@ export class CharacterService {
   getAllCharacters(): Observable<PlayerCharacter[]> {
     return this.http.get<PlayerCharacter[]>(this.baseUrl);
   }
+
+  getCharacterById(id: number): Observable<PlayerCharacter> {
+    return this.http.get<PlayerCharacter>(`${this.baseUrl}/${id}`);
+  }
 }

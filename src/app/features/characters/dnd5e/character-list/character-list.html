@@ -8,8 +8,20 @@
   <p>Lade Charaktere...</p>
 }
 
-<ul>
+<div class="character-grid">
   @for (character of characters(); track character.id) {
-    <li>{{ character.name }} — {{ character.race }} {{ character.characterClass }}, Level {{ character.level }}</li>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ character.name }}</mat-card-title>
+        <mat-card-subtitle>{{ character.race }} {{ character.characterClass }}, Level {{ character.level }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Stärke-Modifikator: {{ character.stats.strengthModifier >= 0 ? '+' : '' }}{{ character.stats.strengthModifier }}</p>
+        <p>Proficiency Bonus: +{{ character.proficiencyBonus }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/characters', character.id]">Details ansehen</a>
+      </mat-card-actions>
+    </mat-card>
   }
-</ul>
+</div>
