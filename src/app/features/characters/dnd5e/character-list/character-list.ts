@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CharacterService } from '../../../../core/services/character.service';
 import { PlayerCharacter } from '../../../../core/models/player-character.model';
@@ -11,19 +11,18 @@ import { PlayerCharacter } from '../../../../core/models/player-character.model'
   styleUrl: './character-list.scss'
 })
 export class CharacterList implements OnInit {
-  characters: PlayerCharacter[] = [];
-  errorMessage: string | null = null;
+  characters = signal<PlayerCharacter[]>([]);
+  errorMessage = signal<string | null>(null);
 
   constructor(private characterService: CharacterService) {}
 
   ngOnInit(): void {
     this.characterService.getAllCharacters().subscribe({
       next: (data) => {
-        this.characters = data;
+        this.characters.set(data);
       },
       error: (err) => {
-        this.errorMessage = 'Fehler beim Laden der Charaktere: ' + err.message;
-        console.error(err);
+        this.errorMessage.set('Fehler beim Laden der Charaktere: ' + err.message);
       }
     });
   }
