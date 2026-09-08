@@ -1,59 +1,68 @@
-# DndCharacterFrontend
+# pnp-character-manager-frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.5.
+Gemeinsames Angular-Frontend für die Verwaltung von Pen-&-Paper-Charakteren über mehrere Regelwerke
+hinweg — Teil des [pnp-character-manager](https://github.com/FelixRabenholdDev/pnp-character-manager)-Projekts.
 
-## Development server
+Aktuell angebunden: [`dnd-backend`](https://github.com/FelixRabenholdDev/dnd-backend) (D&D 5e, 2024).
 
-To start a local development server, run:
+## Tech-Stack
 
+- Angular 22 (Standalone Components, Signals)
+- Angular Material
+- RxJS
+- TypeScript
+
+## Voraussetzungen
+
+- Node.js 24 LTS
+- Angular CLI (`npm install -g @angular/cli`)
+- Ein laufendes Backend (siehe [`dnd-backend`](https://github.com/FelixRabenholdDev/dnd-backend))
+
+## Lokal starten
+
+1. Abhängigkeiten installieren:
+```bash
+npm install
+```
+
+2. Entwicklungsserver starten:
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Die Anwendung läuft danach unter `http://localhost:4200`.
 
-## Code scaffolding
+**Wichtig:** Das Backend (`dnd-backend`) muss parallel laufen, inklusive der zugehörigen
+PostgreSQL-Instanz — siehe README dort für die Einrichtung.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Umgebungskonfiguration
 
-```bash
-ng generate component component-name
-```
+Die Backend-URL wird über Angulars Environment-System gesteuert:
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- `src/environments/environment.development.ts` — für `ng serve` (lokale Entwicklung)
+- `src/environments/environment.ts` — für Produktions-Builds
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Tests ausführen
 
 ```bash
 ng test
 ```
 
-## Running end-to-end tests
+## Projektstruktur
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
+```
+src/app/
+├── core/                         Anwendungsweite Dienste
+│   ├── models/                    TypeScript-Interfaces, passend zu den Backend-DTOs
+│   ├── services/                  HTTP-Kommunikation mit dem Backend
+│   ├── interceptors/              Automatisches Anhängen des JWT an Anfragen
+│   └── guards/                    Routen-Schutz für nicht eingeloggte Nutzer
+├── features/
+│   ├── auth/                      Login
+│   └── characters/
+│       └── dnd5e/                 D&D-5e-spezifische Komponenten
+└── shared/                       Wiederverwendbare UI-Bausteine
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Die Verschachtelung unter `features/characters/` ist bewusst auf weitere Regelwerke vorbereitet
+(künftig z. B. `features/characters/pathfinder/`), ohne diese vorab zu implementieren.
