@@ -3,10 +3,12 @@ import { CharacterList } from './features/characters/dnd5e/character-list/charac
 import { CharacterDetail } from './features/characters/dnd5e/character-detail/character-detail';
 import { Login } from './features/auth/login/login';
 import { authGuard } from './core/guards/auth.guard';
+import { CharacterCreate } from './features/characters/dnd5e/character-create/character-create';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
-  { path: 'characters', component: CharacterList, canActivate: [authGuard] },
+  { path: 'characters', component: CharacterList, canActivate: [authGuard] },  
+  { path: 'characters/new', component: CharacterCreate, canActivate: [authGuard] },
   { path: 'characters/:id', component: CharacterDetail, canActivate: [authGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
