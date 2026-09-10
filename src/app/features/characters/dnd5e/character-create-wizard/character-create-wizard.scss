@@ -1,0 +1,12 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+  margin-bottom: 12px;
+}
+
+mat-radio-button {
+  display: block;
+  margin: 8px 0;
+}

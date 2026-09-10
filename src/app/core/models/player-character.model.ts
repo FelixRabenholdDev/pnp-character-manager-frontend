@@ -1,3 +1,5 @@
+import { Ability } from '../models/reference-data.model';
+
 export interface CharacterStats {
   strength: number;
   dexterity: number;
@@ -13,15 +15,19 @@ export interface CharacterStats {
   charismaModifier: number;
 }
 
-export interface PlayerCharacter {
-  id: number;
-  name: string;
-  characterClass: string;
-  race: string;
-  level: number;
-  stats: CharacterStats;
-  proficiencyBonus: number;
-  ownerUsername: string;
+export interface EffectiveAbilityScores {
+  strength: number;
+  strengthModifier: number;
+  dexterity: number;
+  dexterityModifier: number;
+  constitution: number;
+  constitutionModifier: number;
+  intelligence: number;
+  intelligenceModifier: number;
+  wisdom: number;
+  wisdomModifier: number;
+  charisma: number;
+  charismaModifier: number;
 }
 
 export interface CharacterStatsInput {
@@ -31,12 +37,31 @@ export interface CharacterStatsInput {
   intelligence: number;
   wisdom: number;
   charisma: number;
-} 
+}
+
+export type GenerationMethod = 'POINT_BUY' | 'STANDARD_ARRAY';
+
+export interface PlayerCharacter {
+  id: number;
+  name: string;
+  raceName: string;
+  className: string;
+  backgroundName: string;
+  level: number;
+  generationMethod: GenerationMethod;
+  baseStats: CharacterStats;
+  effectiveStats: EffectiveAbilityScores;
+  proficiencyBonus: number;
+  ownerUsername: string;
+}
 
 export interface PlayerCharacterCreateRequest {
   name: string;
-  characterClass: string;
-  race: string;
+  raceId: number;
+  classId: number;
+  backgroundId: number;
   level: number;
+  generationMethod: GenerationMethod;
   stats: CharacterStatsInput;
+  backgroundBonuses: Partial<Record<Ability, number>>;
 }

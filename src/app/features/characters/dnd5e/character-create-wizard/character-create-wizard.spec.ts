@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { CharacterCreate } from './character-create';
+import { CharacterCreateWizard } from './character-create-wizard';
 
-describe('CharacterCreate', () => {
-  let component: CharacterCreate;
-  let fixture: ComponentFixture<CharacterCreate>;
+describe('CharacterCreateWizard', () => {
+  let component: CharacterCreateWizard;
+  let fixture: ComponentFixture<CharacterCreateWizard>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CharacterCreate],
+      imports: [CharacterCreateWizard],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CharacterCreate);
+    fixture = TestBed.createComponent(CharacterCreateWizard);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

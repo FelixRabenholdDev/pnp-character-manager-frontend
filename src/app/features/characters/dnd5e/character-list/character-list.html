@@ -14,10 +14,10 @@
     <mat-card>
       <mat-card-header>
         <mat-card-title>{{ character.name }}</mat-card-title>
-        <mat-card-subtitle>{{ character.race }} {{ character.characterClass }}, Level {{ character.level }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ character.raceName  }} {{ character.className  }}, Level {{ character.level }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
-        <p>Stärke-Modifikator: {{ character.stats.strengthModifier >= 0 ? '+' : '' }}{{ character.stats.strengthModifier }}</p>
+        <p>Stärke-Modifikator: {{ character.effectiveStats.strengthModifier >= 0 ? '+' : '' }}{{ character.effectiveStats.strengthModifier }}</p>
         <p>Proficiency Bonus: +{{ character.proficiencyBonus }}</p>
       </mat-card-content>
       <mat-card-actions>
