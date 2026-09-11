@@ -11,7 +11,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ReferenceDataService } from '../../../../core/services/reference-data.service';
 import { CharacterService } from '../../../../core/services/character.service';
 import { RaceDefinition, CharacterClassDefinition, BackgroundDefinition, Ability } from '../../../../core/models/reference-data.model';
-import { PlayerCharacterCreateRequest } from '../../../../core/models/player-character.model';
+import { PlayerCharacterCreateRequest, RolledAbilityScore } from '../../../../core/models/player-character.model';
 
 const STANDARD_ARRAY_VALUES = [15, 14, 13, 12, 10, 8];
 
@@ -36,6 +36,8 @@ export class CharacterCreateWizard implements OnInit {
   classes = signal<CharacterClassDefinition[]>([]);
   backgrounds = signal<BackgroundDefinition[]>([]);
   errorMessage = signal<string | null>(null);
+  rolledScores = signal<RolledAbilityScore[]>([]);
+  rolledAssignments = signal<(number | null)[]>([null, null, null, null, null, null]);
 
   methodForm: FormGroup;
   identityForm: FormGroup;
@@ -119,7 +121,9 @@ export class CharacterCreateWizard implements OnInit {
   }
 
   get isStatsStepValid(): boolean {
-    return this.selectedMethod === 'STANDARD_ARRAY' ? this.isStandardArrayValid : this.isPointBuyValid;
+    if (this.selectedMethod === 'STANDARD_ARRAY') return this.isStandardArrayValid;
+    if (this.selectedMethod === 'POINT_BUY') return this.isPointBuyValid;
+    return this.isRolledAssignmentComplete;
   }
 
   get isBonusStepValid(): boolean {
@@ -169,5 +173,53 @@ export class CharacterCreateWizard implements OnInit {
       return Object.entries(err.error.fieldErrors).map(([field, msg]) => `${field}: ${msg}`).join(', ');
     }
     return err.error?.message ?? 'Charakter konnte nicht erstellt werden.';
+  }
+
+  rollScores(): void {
+    this.characterService.rollAbilityScores().subscribe({
+      next: (scores) => {
+        this.rolledScores.set(scores);
+        this.rolledAssignments.set([null, null, null, null, null, null]);
+        this.syncRolledStatsToForm();
+      },
+      error: (err) => this.errorMessage.set('Würfeln fehlgeschlagen: ' + err.message)
+    });
+  }
+
+  onRolledAssignmentChange(abilityIndex: number, rolledIndex: number): void {
+    const current = [...this.rolledAssignments()];
+    current[abilityIndex] = rolledIndex;
+    this.rolledAssignments.set(current);
+    this.syncRolledStatsToForm();
+  }
+
+  private syncRolledStatsToForm(): void {
+    const assignments = this.rolledAssignments();
+    const scores = this.rolledScores();
+
+    this.statsForm.patchValue({
+      strength: assignments[0] !== null ? scores[assignments[0]].total : 8,
+      dexterity: assignments[1] !== null ? scores[assignments[1]].total : 8,
+      constitution: assignments[2] !== null ? scores[assignments[2]].total : 8,
+      intelligence: assignments[3] !== null ? scores[assignments[3]].total : 8,
+      wisdom: assignments[4] !== null ? scores[assignments[4]].total : 8,
+      charisma: assignments[5] !== null ? scores[assignments[5]].total : 8
+    });
+  }
+
+  get isRolledAssignmentComplete(): boolean {
+    const assignments = this.rolledAssignments();
+    const usedIndices = assignments.filter(a => a !== null);
+    return usedIndices.length === 6 && new Set(usedIndices).size === 6;
+  }
+
+  availableRollOptions(abilityIndex: number): { rollIndex: number; score: RolledAbilityScore }[] {
+    const assignments = this.rolledAssignments();
+    const scores = this.rolledScores();
+    const currentAssignment = assignments[abilityIndex];
+
+    return scores
+      .map((score, rollIndex) => ({ rollIndex, score }))
+      .filter(({ rollIndex }) => rollIndex === currentAssignment || !assignments.includes(rollIndex));
   }
 }

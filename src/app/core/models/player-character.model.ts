@@ -39,7 +39,7 @@ export interface CharacterStatsInput {
   charisma: number;
 }
 
-export type GenerationMethod = 'POINT_BUY' | 'STANDARD_ARRAY';
+export type GenerationMethod = 'POINT_BUY' | 'STANDARD_ARRAY' | 'ROLLED';
 
 export interface PlayerCharacter {
   id: number;
@@ -64,4 +64,10 @@ export interface PlayerCharacterCreateRequest {
   generationMethod: GenerationMethod;
   stats: CharacterStatsInput;
   backgroundBonuses: Partial<Record<Ability, number>>;
+}
+
+export interface RolledAbilityScore {
+  rolls: number[];
+  droppedRoll: number;
+  total: number;
 }
