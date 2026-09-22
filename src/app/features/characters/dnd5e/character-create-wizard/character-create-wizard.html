@@ -1,24 +1,29 @@
 <h2>Neuen Charakter erstellen</h2>
 
 @if (errorMessage()) {
-  <p style="color: red;">{{ errorMessage() }}</p>
+  <p style="color: red">{{ errorMessage() }}</p>
 }
 
 <mat-stepper orientation="vertical" linear>
-
   <mat-step [stepControl]="methodForm">
     <ng-template matStepLabel>Erstellungsmethode</ng-template>
     <form [formGroup]="methodForm">
       <mat-radio-group formControlName="generationMethod">
-        <mat-radio-button value="STANDARD_ARRAY">Standard Array (15, 14, 13, 12, 10, 8)</mat-radio-button>
-        <br>
+        <mat-radio-button value="STANDARD_ARRAY"
+          >Standard Array (15, 14, 13, 12, 10, 8)</mat-radio-button
+        >
+        <br />
         <mat-radio-button value="POINT_BUY">Point Buy (27 Punkte Budget)</mat-radio-button>
-        <br>
-        <mat-radio-button value="ROLLED">Würfeln (4W6, niedrigsten Wurf verwerfen)</mat-radio-button>
+        <br />
+        <mat-radio-button value="ROLLED"
+          >Würfeln (4W6, niedrigsten Wurf verwerfen)</mat-radio-button
+        >
       </mat-radio-group>
     </form>
     <div>
-      <button mat-raised-button color="primary" matStepperNext [disabled]="methodForm.invalid">Weiter</button>
+      <button mat-raised-button color="primary" matStepperNext [disabled]="methodForm.invalid">
+        Weiter
+      </button>
     </div>
   </mat-step>
 
@@ -27,7 +32,7 @@
     <form [formGroup]="identityForm">
       <mat-form-field appearance="outline">
         <mat-label>Name</mat-label>
-        <input matInput formControlName="name">
+        <input matInput formControlName="name" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -63,95 +68,108 @@
 
       <mat-form-field appearance="outline">
         <mat-label>Level</mat-label>
-        <input matInput type="number" formControlName="level">
+        <input matInput type="number" formControlName="level" />
       </mat-form-field>
     </form>
     <div>
       <button mat-button matStepperPrevious>Zurück</button>
-      <button mat-raised-button color="primary" matStepperNext [disabled]="identityForm.invalid">Weiter</button>
+      <button mat-raised-button color="primary" matStepperNext [disabled]="identityForm.invalid">
+        Weiter
+      </button>
     </div>
   </mat-step>
 
-    <mat-step>
+  <mat-step>
     <ng-template matStepLabel>Attribute</ng-template>
 
-      @if (selectedMethod === 'ROLLED') {
-        <button mat-raised-button type="button" (click)="rollScores()">Würfeln</button>
+    @if (selectedMethod === 'ROLLED') {
+      <button mat-raised-button type="button" (click)="rollScores()">Würfeln</button>
 
-        @if (rolledScores().length > 0) {
-          <table>
+      @if (rolledScores().length > 0) {
+        <table>
+          <tr>
+            <th>Würfel-Ergebnis</th>
+            <th>Einzelwürfe</th>
+            <th>Verworfen</th>
+            <th>Summe</th>
+          </tr>
+          @for (score of rolledScores(); track $index) {
             <tr>
-              <th>Würfel-Ergebnis</th>
-              <th>Einzelwürfe</th>
-              <th>Verworfen</th>
-              <th>Summe</th>
+              <td>Wurf {{ $index + 1 }}</td>
+              <td>{{ score.rolls.join(', ') }}</td>
+              <td>{{ score.droppedRoll }}</td>
+              <td>
+                <b>{{ score.total }}</b>
+              </td>
             </tr>
-            @for (score of rolledScores(); track $index) {
-              <tr>
-                <td>Wurf {{ $index + 1 }}</td>
-                <td>{{ score.rolls.join(', ') }}</td>
-                <td>{{ score.droppedRoll }}</td>
-                <td><b>{{ score.total }}</b></td>
-              </tr>
-            }
-          </table>
+          }
+        </table>
 
         @for (ability of abilities; track ability; let i = $index) {
           <mat-form-field appearance="outline">
             <mat-label>{{ ability }}</mat-label>
-            <mat-select [value]="rolledAssignments()[i]" (selectionChange)="onRolledAssignmentChange(i, $event.value)">
+            <mat-select
+              [value]="rolledAssignments()[i]"
+              (selectionChange)="onRolledAssignmentChange(i, $event.value)"
+            >
               <mat-option [value]="null">— Zurücksetzen —</mat-option>
               @for (option of availableRollOptions(i); track option.rollIndex) {
-                <mat-option [value]="option.rollIndex">Wurf {{ option.rollIndex + 1 }} ({{ option.score.total }})</mat-option>
+                <mat-option [value]="option.rollIndex"
+                  >Wurf {{ option.rollIndex + 1 }} ({{ option.score.total }})</mat-option
+                >
               }
             </mat-select>
           </mat-form-field>
-        }   
+        }
       }
-} @else {
-  <form [formGroup]="statsForm">
-      @for (ability of abilities; track ability) {
-        <mat-form-field appearance="outline">
-          <mat-label>{{ ability }}</mat-label>
-          @if (selectedMethod === 'STANDARD_ARRAY') {
-            <mat-select [formControlName]="ability.toLowerCase()">
-              @for (value of standardArrayValues; track value) {
-                <mat-option [value]="value">{{ value }}</mat-option>
-              }
-            </mat-select>
-          } @else {
-            <mat-select [formControlName]="ability.toLowerCase()">
-              @for (value of pointBuyOptions; track value) {
-                <mat-option [value]="value">{{ value }}</mat-option>
-              }
-            </mat-select>
-          }
-        </mat-form-field>
-        <br>
-      }
-    </form>
-}    
+    } @else {
+      <form [formGroup]="statsForm">
+        @for (ability of abilities; track ability) {
+          <mat-form-field appearance="outline">
+            <mat-label>{{ ability }}</mat-label>
+            @if (selectedMethod === 'STANDARD_ARRAY') {
+              <mat-select [formControlName]="ability.toLowerCase()">
+                @for (value of standardArrayValues; track value) {
+                  <mat-option [value]="value">{{ value }}</mat-option>
+                }
+              </mat-select>
+            } @else {
+              <mat-select [formControlName]="ability.toLowerCase()">
+                @for (value of pointBuyOptions; track value) {
+                  <mat-option [value]="value">{{ value }}</mat-option>
+                }
+              </mat-select>
+            }
+          </mat-form-field>
+          <br />
+        }
+      </form>
+    }
 
     @if (selectedMethod === 'STANDARD_ARRAY' && !isStandardArrayValid) {
-      <p style="color: red;">Jeder Wert aus {{ standardArrayValues }} muss genau einmal verwendet werden.</p>
+      <p style="color: red">
+        Jeder Wert aus {{ standardArrayValues }} muss genau einmal verwendet werden.
+      </p>
     }
 
     @if (selectedMethod === 'POINT_BUY') {
       <p>Verbleibendes Budget: {{ pointBuyRemaining }} von {{ 27 }}</p>
       @if (!isPointBuyValid) {
-        <p style="color: red;">Budget überschritten oder ungültiger Wert.</p>
+        <p style="color: red">Budget überschritten oder ungültiger Wert.</p>
       }
     }
 
     @if (!isRolledAssignmentComplete) {
-      <p style="color: red;">Jedes Würfel-Ergebnis muss genau einem Attribut zugeordnet werden.</p>
+      <p style="color: red">Jedes Würfel-Ergebnis muss genau einem Attribut zugeordnet werden.</p>
     }
 
     <h3>Background-Boni</h3>
     <form [formGroup]="bonusForm">
       <mat-radio-group formControlName="distributionType">
-        <mat-radio-button value="ONE_ONE_ONE">+1 auf alle drei berechtigten Attribute</mat-radio-button>
-        <br>
+        <mat-radio-button value="ONE_ONE_ONE"
+          >+1 auf alle drei berechtigten Attribute</mat-radio-button
+        >
+        <br />
         <mat-radio-button value="TWO_ONE">+2 auf eines, +1 auf ein anderes</mat-radio-button>
       </mat-radio-group>
 
@@ -178,7 +196,14 @@
 
     <div>
       <button mat-button matStepperPrevious>Zurück</button>
-      <button mat-raised-button color="primary" matStepperNext [disabled]="!isStatsStepValid || !isBonusStepValid">Weiter</button>
+      <button
+        mat-raised-button
+        color="primary"
+        matStepperNext
+        [disabled]="!isStatsStepValid || !isBonusStepValid"
+      >
+        Weiter
+      </button>
     </div>
   </mat-step>
 
@@ -194,5 +219,4 @@
       <button mat-raised-button color="primary" (click)="onSubmit()">Charakter erstellen</button>
     </div>
   </mat-step>
-
 </mat-stepper>

@@ -10,13 +10,28 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { ReferenceDataService } from '../../../../core/services/reference-data.service';
 import { CharacterService } from '../../../../core/services/character.service';
-import { RaceDefinition, CharacterClassDefinition, BackgroundDefinition, Ability } from '../../../../core/models/reference-data.model';
-import { PlayerCharacterCreateRequest, RolledAbilityScore } from '../../../../core/models/player-character.model';
+import {
+  RaceDefinition,
+  CharacterClassDefinition,
+  BackgroundDefinition,
+  Ability,
+} from '../../../../core/models/reference-data.model';
+import {
+  PlayerCharacterCreateRequest,
+  RolledAbilityScore,
+} from '../../../../core/models/player-character.model';
 
 const STANDARD_ARRAY_VALUES = [15, 14, 13, 12, 10, 8];
 
 const POINT_BUY_COST: Record<number, number> = {
-  8: 0, 9: 1, 10: 2, 11: 3, 12: 4, 13: 5, 14: 7, 15: 9
+  8: 0,
+  9: 1,
+  10: 2,
+  11: 3,
+  12: 4,
+  13: 5,
+  14: 7,
+  15: 9,
 };
 
 const POINT_BUY_BUDGET = 27;
@@ -25,11 +40,17 @@ const POINT_BUY_BUDGET = 27;
   selector: 'app-character-create-wizard',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule, MatStepperModule, MatFormFieldModule,
-    MatInputModule, MatSelectModule, MatButtonModule, MatRadioModule
+    CommonModule,
+    ReactiveFormsModule,
+    MatStepperModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatRadioModule,
   ],
   templateUrl: './character-create-wizard.html',
-  styleUrl: './character-create-wizard.scss'
+  styleUrl: './character-create-wizard.scss',
 })
 export class CharacterCreateWizard implements OnInit {
   races = signal<RaceDefinition[]>([]);
@@ -44,7 +65,14 @@ export class CharacterCreateWizard implements OnInit {
   statsForm: FormGroup;
   bonusForm: FormGroup;
 
-  readonly abilities: Ability[] = ['STRENGTH', 'DEXTERITY', 'CONSTITUTION', 'INTELLIGENCE', 'WISDOM', 'CHARISMA'];
+  readonly abilities: Ability[] = [
+    'STRENGTH',
+    'DEXTERITY',
+    'CONSTITUTION',
+    'INTELLIGENCE',
+    'WISDOM',
+    'CHARISMA',
+  ];
   readonly standardArrayValues = STANDARD_ARRAY_VALUES;
   readonly pointBuyOptions = [8, 9, 10, 11, 12, 13, 14, 15];
 
@@ -52,10 +80,10 @@ export class CharacterCreateWizard implements OnInit {
     private fb: FormBuilder,
     private referenceDataService: ReferenceDataService,
     private characterService: CharacterService,
-    private router: Router
+    private router: Router,
   ) {
     this.methodForm = this.fb.group({
-      generationMethod: ['STANDARD_ARRAY', Validators.required]
+      generationMethod: ['STANDARD_ARRAY', Validators.required],
     });
 
     this.identityForm = this.fb.group({
@@ -63,7 +91,7 @@ export class CharacterCreateWizard implements OnInit {
       raceId: [null, Validators.required],
       classId: [null, Validators.required],
       backgroundId: [null, Validators.required],
-      level: [1, [Validators.required, Validators.min(1)]]
+      level: [1, [Validators.required, Validators.min(1)]],
     });
 
     this.statsForm = this.fb.group({
@@ -72,25 +100,25 @@ export class CharacterCreateWizard implements OnInit {
       constitution: [8, Validators.required],
       intelligence: [8, Validators.required],
       wisdom: [8, Validators.required],
-      charisma: [8, Validators.required]
+      charisma: [8, Validators.required],
     });
 
     this.bonusForm = this.fb.group({
       distributionType: ['ONE_ONE_ONE', Validators.required],
       plusTwoAbility: [null],
-      plusOneAbility: [null]
+      plusOneAbility: [null],
     });
   }
 
   ngOnInit(): void {
-    this.referenceDataService.getRaces().subscribe(data => this.races.set(data));
-    this.referenceDataService.getClasses().subscribe(data => this.classes.set(data));
-    this.referenceDataService.getBackgrounds().subscribe(data => this.backgrounds.set(data));
+    this.referenceDataService.getRaces().subscribe((data) => this.races.set(data));
+    this.referenceDataService.getClasses().subscribe((data) => this.classes.set(data));
+    this.referenceDataService.getBackgrounds().subscribe((data) => this.backgrounds.set(data));
   }
 
   get selectedBackground(): BackgroundDefinition | undefined {
     const id = this.identityForm.value.backgroundId;
-    return this.backgrounds().find(b => b.id === id);
+    return this.backgrounds().find((b) => b.id === id);
   }
 
   get selectedMethod(): string {
@@ -117,7 +145,7 @@ export class CharacterCreateWizard implements OnInit {
   }
 
   get isPointBuyValid(): boolean {
-    return this.pointBuyRemaining >= 0 && this.statsValues.every(v => v in POINT_BUY_COST);
+    return this.pointBuyRemaining >= 0 && this.statsValues.every((v) => v in POINT_BUY_COST);
   }
 
   get isStatsStepValid(): boolean {
@@ -140,7 +168,7 @@ export class CharacterCreateWizard implements OnInit {
 
     if (this.bonusForm.value.distributionType === 'ONE_ONE_ONE') {
       const bonuses: Partial<Record<Ability, number>> = {};
-      background.eligibleAbilities.forEach(a => (bonuses[a] = 1));
+      background.eligibleAbilities.forEach((a) => (bonuses[a] = 1));
       return bonuses;
     }
 
@@ -159,18 +187,20 @@ export class CharacterCreateWizard implements OnInit {
       level: this.identityForm.value.level,
       generationMethod: this.methodForm.value.generationMethod,
       stats: this.statsForm.value,
-      backgroundBonuses: this.computeBackgroundBonuses()
+      backgroundBonuses: this.computeBackgroundBonuses(),
     };
 
     this.characterService.createCharacter(request).subscribe({
       next: (created) => this.router.navigate(['/characters', created.id]),
-      error: (err) => this.errorMessage.set(this.extractErrorMessage(err))
+      error: (err) => this.errorMessage.set(this.extractErrorMessage(err)),
     });
   }
 
   private extractErrorMessage(err: any): string {
     if (err.error?.fieldErrors && Object.keys(err.error.fieldErrors).length > 0) {
-      return Object.entries(err.error.fieldErrors).map(([field, msg]) => `${field}: ${msg}`).join(', ');
+      return Object.entries(err.error.fieldErrors)
+        .map(([field, msg]) => `${field}: ${msg}`)
+        .join(', ');
     }
     return err.error?.message ?? 'Charakter konnte nicht erstellt werden.';
   }
@@ -182,7 +212,7 @@ export class CharacterCreateWizard implements OnInit {
         this.rolledAssignments.set([null, null, null, null, null, null]);
         this.syncRolledStatsToForm();
       },
-      error: (err) => this.errorMessage.set('Würfeln fehlgeschlagen: ' + err.message)
+      error: (err) => this.errorMessage.set('Würfeln fehlgeschlagen: ' + err.message),
     });
   }
 
@@ -203,13 +233,13 @@ export class CharacterCreateWizard implements OnInit {
       constitution: assignments[2] !== null ? scores[assignments[2]].total : 8,
       intelligence: assignments[3] !== null ? scores[assignments[3]].total : 8,
       wisdom: assignments[4] !== null ? scores[assignments[4]].total : 8,
-      charisma: assignments[5] !== null ? scores[assignments[5]].total : 8
+      charisma: assignments[5] !== null ? scores[assignments[5]].total : 8,
     });
   }
 
   get isRolledAssignmentComplete(): boolean {
     const assignments = this.rolledAssignments();
-    const usedIndices = assignments.filter(a => a !== null);
+    const usedIndices = assignments.filter((a) => a !== null);
     return usedIndices.length === 6 && new Set(usedIndices).size === 6;
   }
 
@@ -220,6 +250,8 @@ export class CharacterCreateWizard implements OnInit {
 
     return scores
       .map((score, rollIndex) => ({ rollIndex, score }))
-      .filter(({ rollIndex }) => rollIndex === currentAssignment || !assignments.includes(rollIndex));
+      .filter(
+        ({ rollIndex }) => rollIndex === currentAssignment || !assignments.includes(rollIndex),
+      );
   }
 }
