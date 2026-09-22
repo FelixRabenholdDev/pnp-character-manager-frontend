@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "dnd-character-frontend": {
+    "pnp-character-manager-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -65,10 +65,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "dnd-character-frontend:build:production"
+              "buildTarget": "pnp-character-manager-frontend:build:production"
             },
             "development": {
-              "buildTarget": "dnd-character-frontend:build:development"
+              "buildTarget": "pnp-character-manager-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
